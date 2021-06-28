@@ -1,6 +1,6 @@
 #!/bin/sh
 
-chown -R $PUID:$PGID /app /config
+chown -R ${PUID}:${PGID} /app /config
 if [ -f /config/settings.json ]
 then
     ln -s /config/settings.json /app/settings.json
@@ -10,4 +10,4 @@ else
 fi
 
 cd /app
-su-exec $PUID:$PGID ./api
+su-exec ${PUID}:${PGID} ./api

@@ -5,7 +5,7 @@ if [ -f /config/settings.json ]
 then
     ln -s /config/settings.json /app/settings.json
 else
-    echo "{}" > /app/settings.json
+    echo '{}' > /app/settings.json
     ln -s /app/settings.json /config/settings.json
 fi
 

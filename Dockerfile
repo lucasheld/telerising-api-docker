@@ -13,8 +13,7 @@ RUN set -x \
     && apk add --no-cache su-exec \
     && wget -qO- "${TELERISING_API_URL}" | busybox unzip -d / - \
     && mv /telerising /app \
-    && chmod +x /app/api \
-    && ln -s /app/settings.json /config/settings.json
+    && chmod +x /app/api
 
 COPY entrypoint.sh /
 

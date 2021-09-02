@@ -46,7 +46,7 @@ docker run -d \
 | Parameter | Explanation |
 | ---- | --- |
 | `-p 5000` | The webinterface port |
-| `-e PUID=1000` | The user id that executes the application |
-| `-e PGID=1000` | The group Id that executes the application |
+| `-e PUID` | The user id that executes the application |
+| `-e PGID` | The group Id that executes the application |
 | `-v /config` | The application config folder |
 | `-v /etc/localtime` | The container localtime |

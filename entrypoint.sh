@@ -1,12 +1,10 @@
 #!/bin/sh
 
-if [ -f /config/settings.json ]
+if [ ! -f /config/settings.json ]
 then
-    ln -s /config/settings.json /app/settings.json
-else
     echo '{}' > /config/settings.json
-    ln -s /config/settings.json /app/settings.json
 fi
+ln -s /config/settings.json /app/settings.json
 
 chown -R ${PUID}:${PGID} /app /config
 

@@ -7,7 +7,7 @@ VOLUME /config
 ENV PUID=1000 \
     PGID=1000
 
-ARG TELERISING_API_URL="https://github.com/sunsettrack4/telerising-api/raw/2dbfa48b704f8f4913b10abacccc120ff460ab3e/telerising-v0.7.0_x86-64_linux.zip"
+ARG TELERISING_API_URL="https://github.com/sunsettrack4/telerising-api/raw/b37f4584e85ec5df9147b7f7b26c32bfdcd422b5/telerising-v0.7.1_x86-64_linux.zip"
 
 RUN set -x \
     && apk add --no-cache su-exec \

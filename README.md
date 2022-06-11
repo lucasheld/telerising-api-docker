@@ -1,7 +1,3 @@
-[![Docker Build](https://img.shields.io/docker/cloud/build/lucasheld/telerising-api)](https://hub.docker.com/r/lucasheld/telerising-api)
-[![Docker Image Size](https://img.shields.io/docker/image-size/lucasheld/telerising-api/latest)](https://hub.docker.com/r/lucasheld/telerising-api)
-[![Docker Pulls](https://img.shields.io/docker/pulls/lucasheld/telerising-api)](https://hub.docker.com/r/lucasheld/telerising-api)
-
 telerising-api-docker
 =====================
 Docker container for [telerising-api](https://github.com/sunsettrack4/telerising-api) based on alpine.
@@ -14,7 +10,7 @@ Docker container for [telerising-api](https://github.com/sunsettrack4/telerising
 version: "2.1"
 services:
   telerising-api:
-    image: lucasheld/telerising-api
+    image: ghcr.io/lucasheld/telerising-api
     container_name: telerising-api
     restart: unless-stopped
     ports:
@@ -38,7 +34,7 @@ docker run -d \
   -e PGID=1000 \
   -v /etc/localtime:/etc/localtime:ro \
   -v /path/to/config:/config \
-  lucasheld/telerising-api
+  ghcr.io/lucasheld/telerising-api
 ```
 
 ## Parameters

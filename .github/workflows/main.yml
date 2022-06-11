@@ -1,0 +1,91 @@
+name: docker build
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.check-status.outputs.status }}
+      version: ${{ steps.check-status.outputs.version }}
+      url: ${{ steps.check-status.outputs.url }}
+    steps:
+      - name: Check if build required
+        id: check-status
+        run: |
+          FILENAME=$(curl -s https://api.github.com/repos/sunsettrack4/telerising-api/contents | jq -r '[.[]|select(.name|match("^telerising-v.+_x86-64_linux.zip$"))][0].name')
+          VERSION=$(echo "${FILENAME}" | sed 's/^telerising-v\([0-9].[0-9].[0-9]\)_x86-64_linux.zip$/\1/g')
+          COMMIT=$(curl -s https://api.github.com/repos/sunsettrack4/telerising-api/commits | jq -r '.[0].sha')
+          URL="https://github.com/sunsettrack4/telerising-api/raw/${COMMIT}/${FILENAME}"
+
+          if docker pull ghcr.io/lucasheld/telerising-api:latest; then
+            LAST_VERSION=$(docker inspect ghcr.io/lucasheld/telerising-api:latest | jq -r '.[0].Config.Labels.VERSION')
+          else
+            LAST_VERSION=""
+          fi
+          echo "last version: $LAST_VERSION"
+
+          echo ::set-output name=version::$VERSION
+          echo ::set-output name=url::$URL
+          
+          if [ "${VERSION}" == "${LAST_VERSION}" ]; then
+            echo "version already pushed"
+            echo ::set-output name=status::old
+          else
+            echo "version is not pushed"
+            echo ::set-output name=status::new
+          fi
+
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    needs: check
+    if: needs.check.outputs.status == 'new'
+    name: Build docker image
+    steps:
+      - name: Login
+        uses: docker/login-action@v1 
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build docker image
+        uses: docker/build-push-action@v3
+        with:
+          load: true
+          build-args: |
+            VERSION=${{ needs.check.outputs.version }}
+            TELERISING_API_URL=${{ needs.check.outputs.url }}
+          tags: |
+            ghcr.io/lucasheld/telerising-api:latest
+            ghcr.io/lucasheld/telerising-api:${{ needs.check.outputs.version }}
+
+      - name: Run docker image
+        run: |
+          docker run --rm -it -d -p 5000:5000 --name telerising-api ghcr.io/lucasheld/telerising-api:latest
+
+      - name: Test docker image
+        uses: nick-fields/retry@v2
+        with:
+          timeout_seconds: 1
+          max_attempts: 10
+          command: curl http://127.0.0.1:5000/
+
+      - name: Stop docker image
+        run: |
+          docker stop telerising-api
+
+      - name: Push docker image
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          build-args: |
+            VERSION=${{ needs.check.outputs.version }}
+            TELERISING_API_URL=${{ needs.check.outputs.url }}
+          tags: |
+            ghcr.io/lucasheld/telerising-api:latest
+            ghcr.io/lucasheld/telerising-api:${{ needs.check.outputs.version }}

@@ -1,3 +1,5 @@
+[![Docker Build](https://github.com/lucasheld/telerising-api-docker/actions/workflows/main.yml/badge.svg)](https://github.com/lucasheld/telerising-api-docker/actions/workflows/main.yml)
+
 telerising-api-docker
 =====================
 Docker container for [telerising-api](https://github.com/sunsettrack4/telerising-api) based on alpine.

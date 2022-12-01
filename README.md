@@ -1,6 +1,6 @@
 [![docker build](https://github.com/lucasheld/telerising-api-docker/actions/workflows/main.yml/badge.svg)](https://github.com/lucasheld/telerising-api-docker/actions/workflows/main.yml)
-[![latest version](https://ghcr-badge.herokuapp.com/lucasheld/telerising-api/latest_tag?trim=major&label=latest%20version)](https://github.com/lucasheld/telerising-api-docker/pkgs/container/telerising-api/versions)
-[![image size](https://ghcr-badge.herokuapp.com/lucasheld/telerising-api/size)](https://github.com/lucasheld/telerising-api-docker/pkgs/container/telerising-api)
+[![latest version](https://ghcr-badge.deta.dev/lucasheld/telerising-api/latest_tag?trim=major&label=latest%20version)](https://github.com/lucasheld/telerising-api-docker/pkgs/container/telerising-api/versions)
+[![image size](https://ghcr-badge.deta.dev/lucasheld/telerising-api/size)](https://github.com/lucasheld/telerising-api-docker/pkgs/container/telerising-api)
 
 telerising-api-docker
 =====================

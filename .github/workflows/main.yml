@@ -16,7 +16,7 @@ jobs:
         id: check-status
         run: |
           FILENAME=$(curl -s https://api.github.com/repos/sunsettrack4/telerising-api/contents | jq -r '[.[]|select(.name|match("^telerising-v.+_x86-64_linux.zip$"))][0].name')
-          VERSION=$(echo "${FILENAME}" | sed 's/^telerising-v\([0-9].[0-9].[0-9]\)_x86-64_linux.zip$/\1/g')
+          VERSION=$(echo "${FILENAME}" | sed 's/^telerising-v\([0-9]\+.[0-9]\+.[0-9]\+\)_x86-64_linux.zip$/\1/g')
           COMMIT=$(curl -s https://api.github.com/repos/sunsettrack4/telerising-api/commits | jq -r '.[0].sha')
           URL="https://github.com/sunsettrack4/telerising-api/raw/${COMMIT}/${FILENAME}"
 

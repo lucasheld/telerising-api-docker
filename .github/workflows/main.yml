@@ -28,15 +28,15 @@ jobs:
           fi
           echo "last version: $LAST_VERSION"
 
-          echo ::set-output name=version::$VERSION
-          echo ::set-output name=url::$URL
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "url=$URL" >> $GITHUB_OUTPUT
           
           if [ "${VERSION}" == "${LAST_VERSION}" ]; then
             echo "version already pushed"
-            echo ::set-output name=status::old
+            echo "status=old" >> $GITHUB_OUTPUT
           else
             echo "version is not pushed"
-            echo ::set-output name=status::new
+            echo "status=new" >> $GITHUB_OUTPUT
           fi
 
   build:

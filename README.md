@@ -50,3 +50,13 @@ docker run -d \
 | `-e PGID` | The group Id that executes the application |
 | `-v /config` | The application config folder |
 | `-v /etc/localtime` | The container localtime |
+
+The /config volume is primarily used to store the `settings.json` file. However, it can also be used to replace any files in the application folder. All files in /config are automatically symlinked to the application folder. This allows you to overwrite the `providers.json` file, for example:
+```
+/config
+├── app
+│   └── static
+│       └── json
+│           └── providers.json
+└── settings.json
+```

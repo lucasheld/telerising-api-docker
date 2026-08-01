@@ -12,13 +12,6 @@ jobs:
       status: ${{ steps.check-status.outputs.status }}
       version: ${{ steps.check-status.outputs.version }}
       tag: ${{ steps.check-status.outputs.tag }}
-    strategy:
-      matrix:
-        include:
-          - platform: linux/amd64
-            suffix: amd64
-          - platform: linux/arm64
-            suffix: aarch64
     steps:
       - name: Check if build required
         id: check-status
@@ -52,6 +45,13 @@ jobs:
     needs: check
     if: needs.check.outputs.status == 'new'
     name: Build docker image
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+            suffix: amd64
+          - platform: linux/arm64
+            suffix: aarch64
     steps:
       - name: Login
         uses: docker/login-action@v4

@@ -11,14 +11,21 @@ jobs:
     outputs:
       status: ${{ steps.check-status.outputs.status }}
       version: ${{ steps.check-status.outputs.version }}
-      url: ${{ steps.check-status.outputs.url }}
+      tag: ${{ steps.check-status.outputs.tag }}
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+            suffix: amd64
+          - platform: linux/arm64
+            suffix: aarch64
     steps:
       - name: Check if build required
         id: check-status
         run: |
-          RELEASE_DATA=$(curl -s https://api.github.com/repos/sunsettrack4/telerising-api/releases/latest)
-          VERSION=$(echo "$RELEASE_DATA" | jq -r '.tag_name' | cut -c2-)
-          URL=$(echo "$RELEASE_DATA" | jq -r '.assets[] | select(.name | match("^telerising-v.+_x86-64_linux.zip$")).browser_download_url')
+          RELEASE_DATA=$(curl -s https://api.github.com/repos/DEvmIb/telerising-builds/releases/latest)
+          TAG=$(echo "$RELEASE_DATA" | jq -r '.tag_name')
+          VERSION=$(echo "$TAG" | cut -c2- | grep -oE 'v[0-9]+(\.[0-9]+)+' | sed 's/^v//')
 
           if docker pull ghcr.io/lucasheld/telerising-api:latest; then
             LAST_VERSION=$(docker inspect ghcr.io/lucasheld/telerising-api:latest | jq -r '.[0].Config.Labels.VERSION')
@@ -28,7 +35,7 @@ jobs:
           echo "last version: $LAST_VERSION"
 
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
           
           if [ "${VERSION}" == "${LAST_VERSION}" ]; then
             echo "version already pushed"
@@ -47,19 +54,23 @@ jobs:
     name: Build docker image
     steps:
       - name: Login
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
       - name: Build docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v7
         with:
+          platforms: ${{ matrix.platform }}
           load: true
           build-args: |
+            TAG=${{ needs.check.outputs.tag }}-alpine320-${{ matrix.suffix }}
             VERSION=${{ needs.check.outputs.version }}
-            TELERISING_API_URL=${{ needs.check.outputs.url }}
           tags: |
             ghcr.io/lucasheld/telerising-api:latest
             ghcr.io/lucasheld/telerising-api:${{ needs.check.outputs.version }}
@@ -69,7 +80,7 @@ jobs:
           docker run --rm -it -d -p 5000:5000 --name telerising-api ghcr.io/lucasheld/telerising-api:latest
 
       - name: Test docker image
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v4
         with:
           timeout_seconds: 1
           max_attempts: 10
@@ -80,12 +91,13 @@ jobs:
           docker stop telerising-api
 
       - name: Push docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v7
         with:
+          platforms: ${{ matrix.platform }}
           push: true
           build-args: |
+            TAG=${{ needs.check.outputs.tag }}-alpine320-${{ matrix.suffix }}
             VERSION=${{ needs.check.outputs.version }}
-            TELERISING_API_URL=${{ needs.check.outputs.url }}
           tags: |
             ghcr.io/lucasheld/telerising-api:latest
             ghcr.io/lucasheld/telerising-api:${{ needs.check.outputs.version }}

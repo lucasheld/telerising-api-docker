@@ -1,6 +1,9 @@
-ARG TAG=1784973341-v0.16.5-12f81ee-alpine320-amd64
+ARG TAG=1784973341-v0.16.5-12f81ee
 
-FROM ghcr.io/devmib/telerising-builds:${TAG}
+FROM --platform=linux/amd64 ghcr.io/devmib/telerising-builds:${TAG}-alpine320-amd64 AS build-amd64
+FROM --platform=linux/arm64 ghcr.io/devmib/telerising-builds:${TAG}-alpine320-aarch64 AS build-arm64
+
+FROM build-$BUILDARCH
 
 EXPOSE 5000
 

@@ -64,8 +64,8 @@ jobs:
         with:
           load: true
           build-args: |
-            TAG=${{ matrix.tag }}
-            VERSION=${{ matrix.version }}
+            TAG=${{ needs.check.outputs.tag }}
+            VERSION=${{ needs.check.outputs.version }}
           tags: ghcr.io/lucasheld/telerising-api:test
 
       - name: Run

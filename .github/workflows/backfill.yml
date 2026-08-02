@@ -54,6 +54,9 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           load: true
+          build-args: |
+            TAG=${{ matrix.tag }}
+            VERSION=${{ matrix.version }}
           tags: ghcr.io/lucasheld/telerising-api:test
 
       - name: Run

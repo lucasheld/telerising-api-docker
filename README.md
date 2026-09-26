@@ -9,12 +9,12 @@ Docker container for [telerising-api](https://github.com/sunsettrack4/telerising
 ### docker-compose
 ```yaml
 ---
-version: "2.1"
 services:
   telerising-api:
     image: ghcr.io/lucasheld/telerising-api
     container_name: telerising-api
     restart: unless-stopped
+    tty: true
     ports:
       - 5000:5000
     environment:
@@ -31,6 +31,7 @@ services:
 docker run -d \
   --name=telerising-api \
   --restart unless-stopped \
+  -t \
   -p 5000:5000 \
   -e PUID=1000 \
   -e PGID=1000 \
